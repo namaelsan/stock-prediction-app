@@ -1,0 +1,1 @@
+# oluşturulan modeli test et ve test case ile gerçek case'i görsel olarak karşılaştır (matplotlib.pyplot vb)

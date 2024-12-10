@@ -1,0 +1,1 @@
+# lineer regresyon ile modeli oluştur
