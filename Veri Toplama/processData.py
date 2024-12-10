@@ -32,13 +32,35 @@ def getData(tickers):
     # yfinance kullanarak bist100 listesindeki hisselerin son 5 yıldaki hisse değerlerini indir.
 
     for ticker in tickers:
-        data = yf.download(ticker, period='2y')
+        data = yf.download(ticker, period='5y')
         if data.empty:
-            continue
+            data = yf.download(ticker,period='max')
         data.to_csv(f"./Veri Toplama/data/{ticker.replace('.IS','')}.csv")
     
     return data
 
+def formatData(tickers):
+    try:
+        for ticker in tickers:
+            with open(f"./Veri Toplama/data/{ticker.replace('.IS','')}.csv", "r") as fr:
+                # reading line by line
+                lines = fr.readlines()                
+                lines[0] = lines[0].replace("Price", "Date", 1)
+                
+                # pointer for position
+                ptr = 1
+
+
+                # opening in writing mode
+                with open(f"./Veri Toplama/data/{ticker.replace('.IS','')}.csv", "w") as fw:
+                    for line in lines:
+                        if ptr != 2 and ptr != 3:
+                            fw.write(line)
+                        ptr += 1
+
+        print("Formatted")
+    except:
+        print("Formatting error")
 
 # def mergeData():
 #     # getData ile elde edilen hisse değerlerini tek bir MergeData.csv dosyasına yaz
@@ -56,10 +78,11 @@ def getData(tickers):
 
 if (__name__ == "__main__"):
     # getData ve mergeData kullanılarak bir csv dosyası oluştur.
-    # url = "https://www.kap.org.tr/en/Endeksler"
-    # tickers = getTickers(url)
-    # saveTickers(tickers)
-    # getData(tickers)
+    url = "https://www.kap.org.tr/en/Endeksler"
+    tickers = getTickers(url)
+    saveTickers(tickers)
+    getData(tickers)
+    formatData(tickers)
 
 
     exit()
