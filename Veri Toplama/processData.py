@@ -39,29 +39,6 @@ def getData(tickers):
     
     return data
 
-def formatData(tickers):
-    try:
-        for ticker in tickers:
-            with open(f"./Veri Toplama/data/{ticker.replace('.IS','')}.csv", "r") as fr:
-                # reading line by line
-                lines = fr.readlines()                
-                lines[0] = lines[0].replace("Price", "Date", 1)
-                
-                # pointer for position
-                ptr = 1
-
-
-                # opening in writing mode
-                with open(f"./Veri Toplama/data/{ticker.replace('.IS','')}.csv", "w") as fw:
-                    for line in lines:
-                        if ptr != 2 and ptr != 3:
-                            fw.write(line)
-                        ptr += 1
-
-        print("Formatted")
-    except:
-        print("Formatting error")
-
 # def mergeData():
 #     # getData ile elde edilen hisse değerlerini tek bir MergeData.csv dosyasına yaz
 #     mergedData = pd.DataFrame()
@@ -82,7 +59,5 @@ if (__name__ == "__main__"):
     tickers = getTickers(url)
     saveTickers(tickers)
     getData(tickers)
-    formatData(tickers)
-
 
     exit()
