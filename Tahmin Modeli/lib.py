@@ -20,6 +20,30 @@ pastDays=60
 feature=2
 
 
+def regressorFit(stockList,regressor,trainset):
+    for i in stockList:
+        print("Fitting to", i)
+        history = regressor.fit(trainset[i]["X"], trainset[i]["y"], epochs=45, batch_size=175)
+    return history 
+
+def initModel(optimizer,loss):
+    regressor = Sequential()
+    # First LSTM layer with Dropout regularisation
+    regressor.add(LSTM(units=128, return_sequences=True, input_shape=(pastDays,feature)))
+    regressor.add(Dropout(0.2))
+    # Second LSTM layer
+    regressor.add(LSTM(units=64, return_sequences=True))
+    regressor.add(Dropout(0.3))
+    # Third LSTM layer
+    regressor.add(LSTM(units=32, return_sequences=False))
+    regressor.add(Dropout(0.3))
+    # The output layer
+    regressor.add(Dense(units=1))
+
+    # Compiling the RNN
+    regressor.compile(optimizer, loss)
+    return regressor
+
 def crop_image(input_path, output_path, left, upper, right, lower):
     # Görseli aç
     image = Image.open(input_path)
@@ -61,15 +85,19 @@ def csvtoStockList():
 def showGraph(stockname,y_true,y_pred,MABE):
     plt.figure(figsize=(14,6))
     plt.title(f"{stockname} with MABE {MABE}")
-    plt.plot(y_true)
-    plt.plot(y_pred,".")
-    # plt.show()
+    plt.plot(y_true[-pastDays:],label="True Values")
+    plt.plot(y_pred[-pastDays:],".",label="Predicted Values")
+    plt.legend()
+    plt.show()
+
 
 def saveGraph(stockName,y_true,y_pred,MABE):
     plt.figure(figsize=(14,6))
     plt.title(f"{stockName} with MABE {MABE}")
-    plt.plot(y_true)
-    plt.plot(y_pred,".")
+    plt.plot(y_true[-pastDays:],label="True Values")
+    plt.plot(y_pred[-pastDays:],".",label="Predicted Values")
+    plt.legend()
+
     # Grafiği kaydet
     plot_path = f"web/static/charts/{stockName}_prediction_plot.png"
     if not os.path.exists("web/static/charts/"):
@@ -79,24 +107,8 @@ def saveGraph(stockName,y_true,y_pred,MABE):
     # 125 birim x, 40 birim y kırpma
     cropped_plot_path = f"web/static/charts/{stockName}_prediction_plot.png"
     crop_image(plot_path, cropped_plot_path, 115, 40, 1400 - 125, 600 - 40) 
+    plt.close()
 
-def initModel(optimizer,loss):
-    regressor = Sequential()
-    # First LSTM layer with Dropout regularisation
-    regressor.add(LSTM(units=128, return_sequences=True, input_shape=(pastDays,feature)))
-    regressor.add(Dropout(0.2))
-    # Second LSTM layer
-    regressor.add(LSTM(units=64, return_sequences=True))
-    regressor.add(Dropout(0.2))
-    # Third LSTM layer
-    regressor.add(LSTM(units=64, return_sequences=False))
-    regressor.add(Dropout(0.2))
-    # The output layer
-    regressor.add(Dense(units=1))
-
-    # Compiling the RNN
-    regressor.compile(optimizer, loss)
-    return regressor
 
 def splitTrainAndTest(df,stockList,trainPercentage):
     df_new={}
@@ -146,12 +158,6 @@ def splitDataXy(transform_train,transform_test,stockList,trainScalers,testScaler
         trainset[j]["y"] = y_train 
     return trainset,testset
     
-def regressorFit(stockList,regressor,trainset):
-    for i in stockList:
-        print("Fitting to", i)
-        history = regressor.fit(trainset[i]["X"], trainset[i]["y"], epochs=10, batch_size=150)
-    return history 
-
 
 def scaleData(stockList,df_new):
     transform_train = {}
