@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_absolute_percentage_error
@@ -54,7 +55,7 @@ def main():
             pastTransformed = np.reshape(pastXShaped, shape1)
 
 
-            past=pastTransformed[j][59][0]
+            past=pastTransformed[j][lib.pastDays - lib.futureDays][0]
             pred=y_pred[j][0]
             true=y_true[j][0]
             if ((pred - past) * (true - past)) > 0:
