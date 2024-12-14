@@ -41,7 +41,7 @@ def removingUselessData(csv_files):
         prices = dataFrame['Close'].values.reshape(-1, 1)
         columnsToKeep = ['Date','Close','Volume']
         dataFrame = dataFrame[columnsToKeep]
-        if(csv_file == "LMYK.csv"):
+        if(csv_file == "LMYK.csv" or csv_file == "ALTNY.csv" or csv_file == "LMKDC.csv" or csv_file == "OBAMS.csv"):
             os.remove(f"./Veri Toplama/data/{csv_file}")
             continue
         dataFrame.to_csv(f"./Veri Toplama/data/{csv_file}",index=False)
