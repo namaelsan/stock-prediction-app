@@ -10,7 +10,28 @@ from keras.optimizers import SGD
 import keras.models
 import math
 from sklearn.metrics import mean_squared_error
+from PIL import Image
 
+def crop_image(input_path, output_path, left, upper, right, lower):
+    # Görseli aç
+    image = Image.open(input_path)
+    
+    # Görseli kırp
+    cropped_image = image.crop((left, upper, right, lower))
+    
+    # Kırpılan görseli kaydet
+    cropped_image.save(output_path)
+
+def writePredictionsToFile(pred_result, csv_files):
+    # Dosyayı açıyoruz (dosya yoksa oluşturur)
+    with open("predicted_stock_prices.txt", "w") as file:
+        # Dosyaya başlık yazıyoruz
+        file.write("Şirket Adı\tTahmin Edilen Fiyat\n")
+        
+        # Her bir şirketin tahmin edilen fiyatlarını dosyaya yazıyoruz
+        for i in csv_files:
+            predicted_price = pred_result[i]["Pred"][-1][0]  # Son tahmin edilen fiyat
+            file.write(f"{i}\t{predicted_price}\n")
 
 def getModel():
     if(os.path.exists("Ağırlıklar/test.keras")):
@@ -147,7 +168,17 @@ def main():
         plt.title(f"{i} with MSE {MSE}")
         plt.plot(y_true)
         plt.plot(y_pred,".")
-        plt.show()
+        # Grafiği kaydet
+        plot_path = f"web/static/charts/{i}_prediction_plot.png"
+        plt.savefig(plot_path)
+
+        # 125 birim x, 40 birim y kırpma
+        cropped_plot_path = f"web/static/charts/{i}_prediction_plot.png"
+        crop_image(plot_path, cropped_plot_path, 115, 40, 1400 - 125, 600 - 40) 
+
+        # Tahmin sonuçlarını bir dosyaya yazdırıyoruz
+    writePredictionsToFile(pred_result, csv_files)
+    
     print(f"Overall Success:{totalPercentage/len(csv_files)}")
 
 
