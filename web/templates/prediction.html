@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tahmin Sayfası</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/prediction.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=REM&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Geri git simgesi -->
+    <img src="{{ url_for('static', filename='images/back.png') }}" alt="Geri" class="back-icon" onclick="window.location.href='/home'">
+
+    <div class="header">
+        <h1>Şirket: {{ company[1] }}</h1> <!-- Şirket adı -->
+        <div class="left">
+            <p>Tarih</p>
+            <p2>{{ date }}</p2>
+            <p>Hacim</p>
+            <p1>{{ volume }}</p1>
+        </div>
+        <div class="right">
+            <p>Kapanış Değeri</p>
+            <p1>{{ close_price }}</p1>
+            <p>Tahmini Fiyat</p>
+            <p1>{{ predicted_price }}</p1>
+        </div>
+    </div>
+    
+    <!-- Grafik alanı -->
+    <div class="chart-area">
+        <img src="{{ url_for('static', filename='charts/' + company_name + '_prediction_plot.png') }}" alt="Tahmin Grafiği">
+    </div>
+    
+    <!-- Footer kısmı -->
+<div class="footer">
+    <p class="result">
+        Sonuç: 
+        {% if close_price > predicted_price %}
+            <span id="result-text" class="SAT"> SAT</span>
+        {% else %}
+            <span id="result-text" class="AL"> AL</span>
+        {% endif %}
+    </p>
+</div>
+
+
+</body>
+</html>

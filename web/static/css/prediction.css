@@ -1,0 +1,145 @@
+/* Genel sıfırlama */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'REM', sans-serif;
+}
+
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-image: url('/static/images/wallpaper2.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #000;
+}
+
+/* Geri simgesi */
+.back-icon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+/* Header kısmı */
+.header {
+    position: absolute;
+    top: 20px; /* Üstten konum */
+    left: 900px; /* Sayfanın ortasına yerleştirecek */
+    transform: translateX(-50%); /* Sol-sağ ortalama */
+    padding: 20px 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 80%; /* Daha geniş bir alan */
+}
+
+/* H1 başlık */
+.header h1 {
+    margin: 20px;
+    font-size: 36px;
+    font-weight: bold;
+    color: #6e6e6e;
+    position: relative;
+    text-transform: uppercase;
+}
+
+/* Sol ve sağdaki p etiketleri */
+.header .left, .header .right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    bottom: -50px; /* h1'in altına konumlandır */
+}
+
+.header .left {
+    left: 500px; /* Sol altta */
+    text-align: left;
+    top: 130px;
+    gap: 20px;
+}
+
+.header .right {
+    right: 550px; /* Sağ altta */
+    text-align: right;
+    top: 130px;
+    text-align: left;
+    gap: 20px;
+}
+
+.header p {
+    color: #000;
+    text-transform: uppercase; /* Harfleri büyük yap */
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+}
+
+.header p1 {
+    font-weight: bold; /* Kalın metin */
+    display: inline-block; /* p1 etiketlerini hizalamak için inline-block yapıyoruz */
+    color: #34960e; /* Varsayılan siyah renk */
+}
+
+/* Grafik alanı */
+.chart-area {
+    position: absolute;
+    top: 550px; /* Sayfanın ortasına hizalanmış */
+    left: 900px;
+    transform: translate(-50%, -50%); /* Tam merkezde konum */
+    width: 500px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-area img {
+    width: 850px;
+    height: 500px;
+    object-fit: contain; /* Görselin oranını korur */
+}
+
+/* Footer kısmı */
+.footer {
+    position: absolute;
+    bottom: 110px; /* Alt kısımda konum */
+    text-align: center;
+    left: 750px;
+}
+
+.footer .result {
+    font-size: 3rem; /* Daha büyük font */
+    font-weight: bold; /* Kalın metin */
+    text-transform: uppercase; /* Tamamen büyük harf */
+    color: #000;
+}
+
+/* Sonuç metni */
+.result {
+    font-size: 3rem;  /* Yazı büyüklüğünü artır */
+    font-weight: bold;  /* Kalın yazı */
+}
+
+/* SAT için kırmızı renk */
+#result-text {
+    font-size: 3rem;  /* Font büyüklüğünü artır */
+    font-weight: bold;
+}
+
+#result-text.SAT {
+    color: red;  /* SAT metni kırmızı */
+}
+
+#result-text.AL {
+    color: green;  /* AL metni yeşil */
+}
