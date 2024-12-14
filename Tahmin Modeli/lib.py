@@ -2,8 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import tensorflow as tf
-
+from sklearn.metrics import mean_absolute_percentage_error
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout
@@ -23,7 +22,7 @@ feature=2
 def regressorFit(stockList,regressor,trainset):
     for i in stockList:
         print("Fitting to", i)
-        history = regressor.fit(trainset[i]["X"], trainset[i]["y"], epochs=45, batch_size=175)
+        history = regressor.fit(trainset[i]["X"], trainset[i]["y"], epochs=10, batch_size=200)
     return history 
 
 def initModel(optimizer,loss):
@@ -33,16 +32,67 @@ def initModel(optimizer,loss):
     regressor.add(Dropout(0.2))
     # Second LSTM layer
     regressor.add(LSTM(units=64, return_sequences=True))
-    regressor.add(Dropout(0.3))
-    # Third LSTM layer
+    regressor.add(Dropout(0.2))
+
     regressor.add(LSTM(units=32, return_sequences=False))
-    regressor.add(Dropout(0.3))
+    regressor.add(Dropout(0.2))
+
     # The output layer
-    regressor.add(Dense(units=1))
+    regressor.add(Dense(units=1,kernel_regularizer=regularizers.l2(0.01)))
 
     # Compiling the RNN
     regressor.compile(optimizer, loss)
     return regressor
+
+def predictResults(testScalers,stockName,testset,regressor,trainPercentage,df,pred_result):
+    y_true = testScalers[stockName]["y"].inverse_transform(testset[stockName]["y"].reshape(-1,1))
+    prediction=regressor.predict(testset[stockName]["X"])
+
+    time = (int) ((len(df[stockName]) -1) * trainPercentage)
+    if (len(df[stockName])-1 - time) < pastDays:
+        splitTime= df[stockName].index[len(df[stockName])-1 -pastDays]
+    else:
+        splitTime= df[stockName].index[time]
+    scaler = MinMaxScaler(feature_range=(0,1))
+    scaler.fit_transform(df[stockName].loc[splitTime:,["Close"]])
+
+    y_pred = scaler.inverse_transform(prediction)
+    MABE = mean_absolute_percentage_error(y_true, y_pred)
+    pred_result[stockName] = {}
+    pred_result[stockName]["True"] = y_true
+    pred_result[stockName]["Pred"] = y_pred
+    return pred_result,y_true,y_pred,MABE
+
+def printPredictions(y_pred,y_true,testset,stockName,df):
+    success=0
+    fail=0
+    for j in range(0,len(y_pred)):
+        
+        trainPercentage=0.7
+        time = (int) ((len(df[stockName]) -1) * trainPercentage)
+        if (len(df[stockName])-1 - time) < pastDays:
+            splitTime= df[stockName].index[len(df[stockName])-1 -pastDays]
+        else:
+            splitTime= df[stockName].index[time]
+        scaler = MinMaxScaler(feature_range=(0,1))
+        scaler.fit_transform(df[stockName].loc[splitTime:,["Close"]])
+
+        pastX=np.array(df[stockName].loc[splitTime:,["Close"]]) 
+
+        past=pastX[j + pastDays -futureDays][0]
+        pred=y_pred[j][0]
+        true=y_true[j][0]
+        if ((pred - past) * (true - past)) > 0:
+            print("GREAT SUCCESS")
+            success+=1
+        else:
+            print("lowlife fail")
+            fail+=1
+        print(f"Prediction= {pred}---True= {true}---Past= {past}")
+
+    return success,fail
+
+
 
 def crop_image(input_path, output_path, left, upper, right, lower):
     # Görseli aç
@@ -85,8 +135,8 @@ def csvtoStockList():
 def showGraph(stockname,y_true,y_pred,MABE):
     plt.figure(figsize=(14,6))
     plt.title(f"{stockname} with MABE {MABE}")
-    plt.plot(y_true[-pastDays:],label="True Values")
-    plt.plot(y_pred[-pastDays:],".",label="Predicted Values")
+    plt.plot(y_true[-pastDays*2:],label="True Values")
+    plt.plot(y_pred[-pastDays*2:],".",label="Predicted Values")
     plt.legend()
     plt.show()
 
@@ -94,8 +144,8 @@ def showGraph(stockname,y_true,y_pred,MABE):
 def saveGraph(stockName,y_true,y_pred,MABE):
     plt.figure(figsize=(14,6))
     plt.title(f"{stockName} with MABE {MABE}")
-    plt.plot(y_true[-pastDays:],label="True Values")
-    plt.plot(y_pred[-pastDays:],".",label="Predicted Values")
+    plt.plot(y_true[-pastDays*2:],label="True Values")
+    plt.plot(y_pred[-pastDays*2:],".",label="Predicted Values")
     plt.legend()
 
     # Grafiği kaydet

@@ -15,7 +15,7 @@ def main():
 
     trainset,testset = lib.splitDataXy(transform_train,transform_test,stockList,trainScalers,testScalers)
 
-    regressor = lib.initModel(Adam(learning_rate=0.0005),'huber')
+    regressor = lib.initModel(Adam(learning_rate=0.001),'mse')
 
     lossHistory = lib.regressorFit(stockList,regressor,trainset)
 
@@ -23,7 +23,4 @@ def main():
 
 
 if __name__ == "__main__":
-    futureDays=1
-    pastDays=30
-    feature=2
     main()
