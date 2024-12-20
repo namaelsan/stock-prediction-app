@@ -79,8 +79,7 @@ def getDataFrames(stockList):
         df[csv_file] = pd.read_csv(f"./Veri Toplama/data/{csv_file}.csv", index_col="Date", parse_dates=True)
     return df
 
-# Örnek kullanım
-if __name__ == "__main__":
+def main():
     # Get a list of the stocks present
     stockList = [file.replace(".csv", "") for file in os.listdir("./Veri Toplama/data/")]
 
@@ -92,3 +91,6 @@ if __name__ == "__main__":
     plotDailyPriceChange(df)
     plotMovingAverages(df)
     plotCorrelationMatrix(df)
+
+if __name__ == "__main__":
+    main()
