@@ -11,6 +11,9 @@ def main():
 
     transform_train, trainScalers, transform_test, testScalers = lib.scaleData(stockList,df_new)
 
+    for stockName in stockList:
+        lib.showTrainTestGraph(stockName,df_new[stockName]["Train"],df_new[stockName]["Test"])
+
     del df_new
 
     trainset,testset = lib.splitDataXy(transform_train,transform_test,stockList,trainScalers,testScalers)

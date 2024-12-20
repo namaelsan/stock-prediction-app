@@ -25,15 +25,15 @@ def main():
     pred_result = {}
 
     for stockName in stockList:
-        pred_result,y_true,y_pred,MABE,MAE = lib.predictResults(testScalers,stockName,testset,regressor,trainPercentage,df,pred_result)
+        pred_result,y_true,y_pred,MABE,MSE = lib.predictResults(testScalers,stockName,testset,regressor,trainPercentage,df,pred_result)
 
         success,fail = lib.printPredictions(y_pred,y_true,testset,stockName,df)
 
         totalSuccess+=(success/(success+fail))
         print(f"Succes Rate:{success*100/(success+fail):.2f}")
 
-        lib.showGraph(stockName,y_true,y_pred,MABE,MAE)
-        lib.saveGraph(stockName,y_true,y_pred,MABE,MAE)
+        lib.showGraph(stockName,y_true,y_pred,MABE,MSE)
+        lib.saveGraph(stockName,y_true,y_pred,MABE,MSE)
 
     # Tahmin sonuçlarını bir dosyaya yazdırıyoruz
     lib.writePredictionsToFile(pred_result, stockList)
