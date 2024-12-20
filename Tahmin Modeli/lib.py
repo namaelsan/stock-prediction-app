@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.metrics import mean_absolute_percentage_error
+import sklearn.metrics
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout
@@ -57,11 +57,12 @@ def predictResults(testScalers,stockName,testset,regressor,trainPercentage,df,pr
     scaler.fit_transform(df[stockName].loc[splitTime:,["Close"]])
 
     y_pred = scaler.inverse_transform(prediction)
-    MABE = mean_absolute_percentage_error(y_true, y_pred)
+    MABE = sklearn.metrics.mean_absolute_percentage_error(y_true[-pastDays*2:], y_pred[-pastDays*2:])
+    MSE = sklearn.metrics.mean_squared_error(y_true[-pastDays*2:],y_pred[-pastDays*2:])
     pred_result[stockName] = {}
     pred_result[stockName]["True"] = y_true
     pred_result[stockName]["Pred"] = y_pred
-    return pred_result,y_true,y_pred,MABE
+    return pred_result,y_true,y_pred,MABE,MSE
 
 def printPredictions(y_pred,y_true,testset,stockName,df):
     success=0
@@ -132,18 +133,18 @@ def csvtoStockList():
 
 
 
-def showGraph(stockname,y_true,y_pred,MABE):
+def showGraph(stockName,y_true,y_pred,MABE,MAE):
     plt.figure(figsize=(14,6))
-    plt.title(f"{stockname} with MABE {MABE}")
+    plt.title(f"{stockName} with MABE:{MABE} MAE:{MAE} ")
     plt.plot(y_true[-pastDays*2:],label="True Values")
     plt.plot(y_pred[-pastDays*2:],".",label="Predicted Values")
     plt.legend()
     plt.show()
 
 
-def saveGraph(stockName,y_true,y_pred,MABE):
+def saveGraph(stockName,y_true,y_pred,MABE,MAE):
     plt.figure(figsize=(14,6))
-    plt.title(f"{stockName} with MABE {MABE}")
+    plt.title(f"{stockName} with MABE:{MABE} MAE:{MAE} ")
     plt.plot(y_true[-pastDays*2:],label="True Values")
     plt.plot(y_pred[-pastDays*2:],".",label="Predicted Values")
     plt.legend()
