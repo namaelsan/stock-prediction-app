@@ -138,19 +138,11 @@ def showGraph(stockName,y_true,y_pred,MABE,MSE):
     plt.title(f"{stockName} with MABE:{MABE} MSE:{MSE} ")
     plt.plot(y_true[-pastDays*2:],label="True Values")
     plt.plot(y_pred[-pastDays*2:],".",label="Predicted Values")
+    plt.ylabel("Price")
+    plt.xlabel("Date")
     plt.legend()
     plt.show()
 
-
-def showTrainTestGraph(stockName,Train,Test):
-    plt.figure(figsize=(14,6))
-    plt.plot(Train["Close"])
-    plt.plot(Test["Close"])
-    plt.ylabel("Price")
-    plt.xlabel("Date")
-    plt.legend(["Training Set", "Test Set"])
-    plt.title(stockName + " Closing Stock Price")
-    plt.show()
 
 
 
@@ -159,6 +151,8 @@ def saveGraph(stockName,y_true,y_pred,MABE,MSE):
     plt.title(f"{stockName} with MABE:{MABE} MSE:{MSE} ")
     plt.plot(y_true[-pastDays*2:],label="True Values")
     plt.plot(y_pred[-pastDays*2:],".",label="Predicted Values")
+    plt.ylabel("Price")
+    plt.xlabel("Date")
     plt.legend()
 
     # Grafiği kaydet
